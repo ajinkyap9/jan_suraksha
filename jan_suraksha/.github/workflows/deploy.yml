@@ -20,17 +20,16 @@ jobs:
         username: ${{ secrets.FTP_USERNAME }}
         password: ${{ secrets.FTP_PASSWORD }}
         
-        # 1. Start from the root of your repo
-        local-dir: ./
+        # 🟢 CRITICAL FIX: This matches the path in your screenshot
+        local-dir: ./jan_suraksha/
         
-        # 2. Upload to the public folder
+        # Uploads to the main public folder
         server-dir: ./htdocs/
         
-        # 🟢 THE TRICK: We give the sync file a NEW name.
-        # This forces GitHub to re-scan and re-upload ALL files.
-        state-name: .ftp-deploy-sync-v2.json
+        # Forces a clean slate so old files don't conflict
+        dangerous-clean-slate: true
         
-        # 3. Protect your database config
+        # Protects your database config
         exclude: |
           **/.git*
           **/.git*/**
