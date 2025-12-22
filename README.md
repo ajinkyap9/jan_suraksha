@@ -2,13 +2,28 @@
 # 🛡️ Jan Suraksha - Online Crime Reporting Portal
 
 ![Jan Suraksha Banner](/jan_suraksha/banner.png)
-
-
 ![Language](https://img.shields.io/badge/Language-PHP-blue?style=for-the-badge&logo=php&logoColor=white)
 ![Database](https://img.shields.io/badge/Database-MySQL-lightgrey?style=for-the-badge&logo=mysql&logoColor=white)
 ![Deployment](https://img.shields.io/badge/Deployment-Automated%20CI%2FCD-brightgreen?style=for-the-badge)
 ![Open Source](https://badges.frapsoft.com/os/v1/open-source.svg?v=103)
 ![License](https://img.shields.io/badge/License-MIT-green.svg)
+
+## 📚 Table of Contents
+
+- [📖 About The Project](#-about-the-project)
+- [🌟 Why this project?](#-why-this-project)
+- [🔗 Live Demo](#-live-demo)
+- [🚀 Tech Stack](#-tech-stack)
+- [📂 Project Architecture](#-project-architecture)
+- [✨ Features](#-features)
+- [📸 Screenshots](#-screenshots)
+- [🛠️ Getting Started (Installation)](#️-getting-started-installation)
+  - [Prerequisites](#prerequisites)
+  - [Step-by-Step Installation](#step-by-step-installation)
+- [🤝 Contribution Guidelines](#-contribution-guidelines)
+- [🛡️ Project Admin](#️-project-admin)
+- [📄 License](#-license)
+- [Thanks for visiting Jan Suraksha! 🇮🇳](#thanks-for-visiting-jan-suraksha-️)
 
 ## 📖 About The Project
 
@@ -26,6 +41,7 @@ In many scenarios, citizens hesitate to report crimes due to fear or procedural 
 ## 🔗 Live Demo
 Check out the live project here:  
 👉 **https://jan-suraksha.infinityfreeapp.com/**
+
 ---
 
 ## 🚀 Tech Stack
@@ -44,7 +60,7 @@ This project is built using the following technologies:
 
 Understanding the codebase is easy! Here is how our files are organized:
 
-```text
+```
 Jan-Suraksha/
 ├── assets/              # Images, CSS, JS files
 ├── includes/            # Reusable PHP snippets (headers, footers)
@@ -72,8 +88,7 @@ Jan-Suraksha/
 
 | Home Page | Complaint Form |
 | :---: | :---: |
-| <img width="1913" height="925" alt="Screenshot 2025-12-07 195411" src="https://github.com/user-attachments/assets/d5163e3c-ef33-43dc-bd2c-d5ace7925f67" />
- | <img width="1897" height="928" alt="Screenshot 2025-12-07 195453" src="https://github.com/user-attachments/assets/036f94c0-80fc-4a91-9d76-47a496f6b25c" /> |
+| <img width="1913" height="925" alt="Screenshot 2025-12-07 195411" src="https://github.com/user-attachments/assets/d5163e3c-ef33-43dc-bd2c-d5ace7925f67" /> | <img width="1897" height="928" alt="Screenshot 2025-12-07 195453" src="https://github.com/user-attachments/assets/036f94c0-80fc-4a91-9d76-47a496f6b25c" /> |
 
 -----
 
@@ -99,9 +114,7 @@ You need a local server environment to run PHP and MySQL.
       * Open your terminal/git bash in the `htdocs` folder.
       * Clone the repo:
 
-    <!-- end list -->
-
-    ```bash
+    ```
     git clone [https://github.com/your-username/jan_suraksha.git]
     ```
 
@@ -114,12 +127,10 @@ You need a local server environment to run PHP and MySQL.
 
 4.  **Connect Database:**
 
-      * Go to the project folder -\> Open the `config.php` file.
+      * Go to the project folder -> Open the `config.php` file.
       * Ensure the credentials match your local setup (Default XAMPP user is `root` with no password).
 
-    <!-- end list -->
-
-    ```php
+    ```
     $db_host = 'localhost';
     $db_user = 'root';
     $db_pass = ''; 
@@ -143,17 +154,16 @@ We welcome contributions from everyone!
 2.  **Assign Yourself:** Comment on the issue asking to be assigned. **Do not start working until assigned.**
 3.  **Fork the Repo:** Click the "Fork" button on the top right.
 4.  **Create a Branch:**
-    ```bash
+    ```
     git checkout -b feature-name
     ```
 5.  **Make Changes & Commit:**
       * Keep code clean and commented.
-    <!-- end list -->
-    ```bash
+    ```
     git commit -m "Fixed bug in login page"
     ```
 6.  **Push Changes:**
-    ```bash
+    ```
     git push origin feature-name
     ```
 7.  **Create a Pull Request (PR):** Go to the original repository and click "Compare & pull request".
@@ -164,7 +174,7 @@ We welcome contributions from everyone!
 
 ## 🛡️ Project Admin
 
-  * **Anjali Jagtap** - *Project Lead* - https://github.com/Anjalijagta
+  * **Anjali Jagtap** - *Project Lead* - [https://github.com/Anjalijagta](https://github.com/Anjalijagta)
 
 -----
 
@@ -174,11 +184,5 @@ This project is licensed under the [MIT License](https://www.google.com/search?q
 
 -----
 
-
-## Thanks for visiting Jan Suraksha\! 🇮🇳
+## Thanks for visiting Jan Suraksha! 🇮🇳
 ## Making society safer, one line of code at a time.
-
-
-```
-```
-
