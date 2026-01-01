@@ -1,32 +1,36 @@
 <?php
 require_once __DIR__ . '/config.php';
+
 $err = '';
-if($_SERVER['REQUEST_METHOD'] === 'POST'){
+
+if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     $name = trim($_POST['name'] ?? '');
     $mobile = trim($_POST['mobile'] ?? '');
-    // normalize mobile: remove non-digit characters (accepts formats like +91 98xxxx...)
-    $mobile = preg_replace('/\D+/', '', $mobile);
+    $mobile = preg_replace('/\D+/', '', $mobile); // Keep only digits
     $email = trim($_POST['email'] ?? '');
     $password = $_POST['password'] ?? '';
     $confirm = $_POST['confirm'] ?? '';
 
-    if(!$name || !preg_match('/^[0-9]{10}$/', $mobile) || !filter_var($email, FILTER_VALIDATE_EMAIL) || strlen($password) < 6 || $password !== $confirm){
-        // Provide a slightly more helpful message for common validation failures
-        $err = 'Please fill the form correctly. Ensure mobile is 10 digits, email is valid and password is at least 6 characters.';
+    // Validation
+    if (!$name || !preg_match('/^[0-9]{10}$/', $mobile) || !filter_var($email, FILTER_VALIDATE_EMAIL) || strlen($password) < 6 || $password !== $confirm) {
+        $err = 'Please fill form correctly: 10-digit mobile, valid email, and matching passwords (min 6 chars).';
     } else {
-        // check duplicates
-        $stmt = $mysqli->prepare('SELECT id FROM users WHERE email=? OR mobile=?');
-        $stmt->bind_param('ss',$email,$mobile);
+        // Check for duplicates
+        $stmt = $mysqli->prepare('SELECT id FROM users WHERE email = ? OR mobile = ?');
+        $stmt->bind_param('ss', $email, $mobile);
         $stmt->execute();
         $stmt->store_result();
-        if($stmt->num_rows > 0){ $err = 'Email or mobile already registered.'; }
-        else {
+
+        if ($stmt->num_rows > 0) {
+            $err = 'Email or mobile already registered.';
+        } else {
+            // Insert new user
             $hash = password_hash($password, PASSWORD_DEFAULT);
-            $ins = $mysqli->prepare('INSERT INTO users (name,mobile,email,password_hash,created_at) VALUES (?,?,?,?,NOW())');
-            $ins->bind_param('ssss',$name,$mobile,$email,$hash);
-            if($ins->execute()) {
-                // Registration successful - redirect to success page
-                header('Location: register-success.php'); 
+            $ins = $mysqli->prepare('INSERT INTO users (name, mobile, email, password_hash, created_at) VALUES (?, ?, ?, ?, NOW())');
+            $ins->bind_param('ssss', $name, $mobile, $email, $hash);
+
+            if ($ins->execute()) {
+                header('Location: register-success.php');
                 exit;
             } else {
                 $err = 'Error creating account. Please try again.';
@@ -34,9 +38,8 @@ if($_SERVER['REQUEST_METHOD'] === 'POST'){
         }
     }
 }
-  }
-  ?>
-  <!doctype html>
+?>
+<!doctype html>
 <html><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><title>Register - Jan Suraksha</title>
 <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet">
 <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.1/font/bootstrap-icons.css">
@@ -198,7 +201,19 @@ body {
     border: none;
   }
 
+  .input-group-text {
+    border: 2px solid #e5e7eb;
+    border-left: none;
+    background: #f8fafc;
+    border-radius: 0 10px 10px 0;
+    color: #64748b;
+    padding: 0.75rem;
+  }
 
+  .input-group-text:hover {
+    background: #e2e8f0;
+    color: #475569;
+  }
 </style>
 </head>
 <body>
@@ -224,7 +239,7 @@ body {
 
             <div class="mb-3">
               <label class="form-label">Mobile Number</label>
-              <input class="form-control" name="mobile" type="tel" autocomplete="tel" placeholder="10 digit mobile number" maxlength="10" required>
+              <input class="form-control" name="mobile" type="tel" autocomplete="tel" placeholder="10 digit mobile number" required>
               <div class="invalid-feedback">Enter a valid 10 digit mobile number.</div>
             </div>
 

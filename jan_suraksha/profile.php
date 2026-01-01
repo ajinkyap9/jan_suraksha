@@ -1,21 +1,34 @@
 <?php
 require_once __DIR__ . '/config.php';
-// The config.php file already starts the session.
-if(empty($_SESSION['user_id'])){ header('Location: login.php'); exit; }
 
-// --- YOUR PHP LOGIC (UNCHANGED) ---
+if (empty($_SESSION['user_id'])) {
+    header('Location: login.php');
+    exit;
+}
+
 $user_id = (int)$_SESSION['user_id'];
-// fetch user
-$stmt = $mysqli->prepare('SELECT name,email,mobile,created_at FROM users WHERE id=?');
-$stmt->bind_param('i',$user_id); $stmt->execute(); $user = $stmt->get_result()->fetch_assoc();
-// fetch complaints
-$cs = $mysqli->prepare('SELECT id,complaint_code,crime_type,date_filed,status FROM complaints WHERE user_id=? ORDER BY date_filed DESC');
-$cs->bind_param('i',$user_id); $cs->execute(); $complaints = $cs->get_result();
+
+// Fetch user profile
+$stmt = $mysqli->prepare('SELECT name, email, mobile, created_at FROM users WHERE id = ?');
+$stmt->bind_param('i', $user_id);
+$stmt->execute();
+$user = $stmt->get_result()->fetch_assoc();
+
+if (!$user) {
+    session_destroy();
+    header('Location: login.php');
+    exit;
+}
+
+// Fetch user complaints
+$cs = $mysqli->prepare('SELECT id, complaint_code, crime_type, date_filed, status FROM complaints WHERE user_id = ? ORDER BY date_filed DESC');
+$cs->bind_param('i', $user_id);
+$cs->execute();
+$complaints = $cs->get_result();
 ?>
 <?php include 'header.php'; ?>
 
 <style>
-/* Profile hero card with subtle gradient */
 .profile-hero {
     background: linear-gradient(135deg, var(--color-primary, #0d6efd) 0%, var(--color-primary-light, #0dcaf0) 100%);
     color: white;
@@ -24,7 +37,6 @@ $cs->bind_param('i',$user_id); $cs->execute(); $complaints = $cs->get_result();
     overflow: hidden;
 }
 
-/* Main cards using theme tokens */
 .profile-card {
     background-color: var(--color-surface, #ffffff);
     border: 1px solid var(--color-border, rgba(0,0,0,0.08));
@@ -32,7 +44,6 @@ $cs->bind_param('i',$user_id); $cs->execute(); $complaints = $cs->get_result();
     box-shadow: 0 4px 12px rgba(0,0,0,0.08);
 }
 
-/* Profile info list */
 .profile-info-list .list-group-item {
     border: 0;
     padding: 0.75rem 0;
@@ -40,7 +51,6 @@ $cs->bind_param('i',$user_id); $cs->execute(); $complaints = $cs->get_result();
     color: var(--color-text, #212529);
 }
 
-/* Complaint cards use surface vars */
 .complaint-card {
     background-color: var(--color-surface-subtle, rgba(0,0,0,0.02));
     border: 1px solid var(--color-border, rgba(0,0,0,0.08));
@@ -65,7 +75,6 @@ $cs->bind_param('i',$user_id); $cs->execute(); $complaints = $cs->get_result();
     color: var(--color-text-muted, #6c757d);
 }
 
-/* Empty state styled as neutral card */
 .empty-state-card {
     border-radius: 10px;
     padding: 2rem;
@@ -80,7 +89,6 @@ $cs->bind_param('i',$user_id); $cs->execute(); $complaints = $cs->get_result();
     margin-bottom: 1rem;
 }
 
-/* Stats chips (future-ready) */
 .stats-chips {
     display: flex;
     gap: 0.75rem;
@@ -95,6 +103,24 @@ $cs->bind_param('i',$user_id); $cs->execute(); $complaints = $cs->get_result();
     border-radius: 20px;
     font-size: 0.875rem;
     font-weight: 500;
+}
+
+body {
+    background-color: var(--color-bg) !important;
+}
+
+.text-primary { 
+    color: var(--color-primary) !important; 
+}
+
+.btn-primary { 
+    background-color: var(--color-primary); 
+    border-color: var(--color-primary); 
+}
+
+.btn-primary:hover {
+    background-color: color-mix(in srgb, var(--color-primary) 90%, black);
+    border-color: color-mix(in srgb, var(--color-primary) 80%, black);
 }
 </style>
 

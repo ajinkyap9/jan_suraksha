@@ -1,17 +1,15 @@
 <?php
 require_once __DIR__ . '/config.php';
 
-if (session_status() === PHP_SESSION_NONE) {
-    session_start();
-}
-
 $err = '';
-if($_SERVER['REQUEST_METHOD']==='POST'){
+
+if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     $user_id = $_SESSION['user_id'] ?? null;
-    // If user not logged in, block server-side processing and show an error (client-side modal will prompt login)
+
     if (empty($user_id)) {
-        $err = 'Please login or sign up before filing a complaint.';
+        $err = 'Please login before filing a complaint.';
     }
+
     $name = trim($_POST['name'] ?? '');
     $mobile = trim($_POST['mobile'] ?? '');
     $house = trim($_POST['house'] ?? '');
@@ -23,77 +21,74 @@ if($_SERVER['REQUEST_METHOD']==='POST'){
     $location = trim($_POST['location'] ?? '');
     $desc = trim($_POST['description'] ?? '');
 
-    // validation
-    if(!$name || !preg_match('/^[0-9]{10}$/', $mobile) || !$crime){
-        $err = 'Please fill required fields correctly (name, 10-digit mobile, crime type).';
-    } elseif($pincode && !preg_match('/^[0-9]{6}$/',$pincode)){
+    // Validation
+    if (!$name || !preg_match('/^[0-9]{10}$/', $mobile) || !$crime) {
+        $err = 'Fill required fields: name, 10-digit mobile, crime type.';
+    } elseif ($pincode && !preg_match('/^[0-9]{6}$/', $pincode)) {
         $err = 'Pincode must be 6 digits.';
     } else {
-        // handle file upload
+        // Handle file upload
         $uploadedFile = null;
-        if(!empty($_FILES['evidence']) && $_FILES['evidence']['error'] === UPLOAD_ERR_OK){
+        if (!empty($_FILES['evidence']) && $_FILES['evidence']['error'] === UPLOAD_ERR_OK) {
             $u = $_FILES['evidence'];
-            $allowed = ['image/jpeg','image/png','application/pdf','video/mp4'];
-            if(!in_array($u['type'],$allowed)){
+            $allowed = ['image/jpeg', 'image/png', 'application/pdf', 'video/mp4'];
+
+            if (!in_array($u['type'], $allowed)) {
                 $err = 'Unsupported file type. Allowed: JPG, PNG, PDF, MP4';
-            } elseif($u['size'] > 20 * 1024 * 1024){ // 20 MB limit
+            } elseif ($u['size'] > 20 * 1024 * 1024) {
                 $err = 'File too large. Maximum 20MB.';
             } else {
                 $ext = pathinfo($u['name'], PATHINFO_EXTENSION);
                 $safe = bin2hex(random_bytes(16)) . '.' . $ext;
                 $destDir = __DIR__ . '/uploads';
-                if(!is_dir($destDir)) mkdir($destDir,0755,true);
+
+                if (!is_dir($destDir)) {
+                    mkdir($destDir, 0755, true);
+                }
+
                 $dest = $destDir . '/' . $safe;
-                if(move_uploaded_file($u['tmp_name'],$dest)){
+                if (move_uploaded_file($u['tmp_name'], $dest)) {
                     $uploadedFile = $safe;
                 } else {
-                    $err = 'Failed to move uploaded file.';
+                    $err = 'Failed to upload file.';
                 }
             }
         }
 
-        if(!$err){
-            // generate complaint code
-            $prefix = 'IN/'.date('Y').'/';
-            $code = $prefix . str_pad(rand(1,99999),5,'0',STR_PAD_LEFT);
-            
-            // *** DEFINITIVE FIX APPLIED HERE ***
-            // 1. Combine address fields into one string to avoid losing data.
+        if (!$err) {
+            // Generate complaint code
+            $prefix = 'IN/' . date('Y') . '/';
+            $code = $prefix . str_pad(rand(1, 99999), 5, '0', STR_PAD_LEFT);
+
+            // Combine address fields
             $complainantAddress = trim("$house, $city, $state - $pincode");
-            if ($complainantAddress === ',  -') { // Check for empty address
+            if ($complainantAddress === ',  -') {
                 $complainantAddress = '';
             }
-            
-            // 2. Prepend the address to the main description.
+
+            // Prepend address to description
             $finalDescription = $desc;
             if (!empty($complainantAddress)) {
                 $finalDescription = "Complainant Address: " . $complainantAddress . "\n\n---\n\n" . $desc;
             }
 
-            // 3. Use the correct column names from your original schema.
-            // Include `evidence` column so column count matches bound values/placeholders.
+            // Prepare INSERT statement
             $stmt = $mysqli->prepare('INSERT INTO complaints (user_id, complaint_code, complainant_name, mobile, crime_type, date_filed, location, description, evidence, status) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?)');
-            
-            // Ensure uid is an integer (user must be logged in due to earlier check)
-            $uid = $user_id ? (int)$user_id : 0;
-            $status = 'Pending';
 
-            // Normalize evidence to an empty string if nothing uploaded to avoid null-binding issues
-            $uploadedFile = $uploadedFile ?? '';
-
-            // Check prepare() success before binding
             if ($stmt === false) {
-                $err = 'Database prepare error: ' . $mysqli->error;
+                $err = 'Database error: ' . $mysqli->error;
             } else {
-                // 4. Bind the correct variables to the corrected query.
+                $uid = (int)$user_id;
+                $uploadedFile = $uploadedFile ?? '';
+                $status = 'Pending';
+
                 $stmt->bind_param('isssssssss', $uid, $code, $name, $mobile, $crime, $date, $location, $finalDescription, $uploadedFile, $status);
 
-                if($stmt->execute()){
-                    header('Location: complain-success.php?code='.urlencode($code)); 
+                if ($stmt->execute()) {
+                    header('Location: complain-success.php?code=' . urlencode($code));
                     exit;
                 } else {
-                    // Provide a more detailed error for debugging
-                    $err = 'Database execution error: ' . $stmt->error;
+                    $err = 'Error filing complaint: ' . $stmt->error;
                 }
             }
         }

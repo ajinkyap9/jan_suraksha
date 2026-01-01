@@ -1,10 +1,7 @@
 <?php
 require_once __DIR__ . '/config.php';
 
-if (session_status() === PHP_SESSION_NONE) {
-    session_start();
-}
-$res = $mysqli->query('SELECT id,title,excerpt,image,created_at FROM articles ORDER BY created_at DESC');
+$res = $mysqli->query('SELECT id, title, excerpt, image, created_at FROM articles ORDER BY created_at DESC');
 ?>
 <?php include 'header.php'; ?>
 

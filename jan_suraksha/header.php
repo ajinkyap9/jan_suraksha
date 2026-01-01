@@ -1,8 +1,5 @@
 <?php
 require_once __DIR__ . '/config.php';
-if (session_status() === PHP_SESSION_NONE) {
-    session_start();
-}
 ?>
 <!doctype html>
 <html lang="en">
@@ -58,15 +55,18 @@ if (session_status() === PHP_SESSION_NONE) {
         
         #page-content {
             min-height: 100vh;
+            transition: min-height 0.15s ease;
         }
 
         /* Hero Section Styling */
         .hero-section {
             background: linear-gradient(rgba(15, 23, 42, 0.5), rgba(15, 23, 42, 0.6)), url('uploads/main.jpg') no-repeat center center;
             background-size: cover;
-            padding: 120px 0;
+            padding: 20px 0; /* reduced vertical padding to make hero smaller */
             color: var(--color-surface);
             text-align: center;
+            margin-top: 0 !important;
+            padding-top: 12px; /* small padding to avoid touching exactly if desired */
         }
 
         .hero-section .btn-light {
@@ -147,7 +147,7 @@ if (session_status() === PHP_SESSION_NONE) {
             box-shadow: 0 10px 30px var(--color-shadow);
             border-color: var(--color-primary-soft);
         }
-        
+
         /* NAVBAR base (for blur effect on scroll if needed) */
         .navbar {
             background: rgba(255, 255, 255, 0.9);
@@ -296,7 +296,7 @@ if (session_status() === PHP_SESSION_NONE) {
         .top-bar {
             background-color: var(--color-surface);
             border-bottom: 1px solid var(--color-border);
-            padding: 4px 0;
+            padding: 2px 0; /* smaller top-bar */
             font-size: 0.9rem;
         }
 
@@ -354,19 +354,365 @@ if (session_status() === PHP_SESSION_NONE) {
         }
 
         .top-seal img {
-            height: 60px;
+            height: 48px;
         }
 
         .navbar-main {
             background-color: var(--color-surface);
-            padding-top: 0.35rem;
-            padding-bottom: 0.35rem;
-            border-bottom: 2px solid var(--color-primary);
+            padding-top: 0.2rem; /* tighter navbar */
+            padding-bottom: 0.2rem; /* tighter navbar */
+            border-bottom: 1px solid var(--color-primary);
             color: var(--color-text);
         }
 
         .navbar-main .navbar-brand-img {
-            height: 52px;
+            height: 44px; /* smaller brand image */
+            border-radius: 999px;
+            overflow: hidden;
+            border: 2px solid var(--color-primary);
+        }
+
+        .navbar-main .navbar-brand-img img {
+            height: 100%;
+            display: block;
+        }
+
+        .navbar-main .navbar-nav .nav-link {
+            color: var(--color-text);
+        }
+
+        .navbar-main .navbar-nav .nav-link:hover {
+            color: var(--color-text);
+        }
+
+        .navbar-main .nav-link,
+        .navbar-main .btn {
+            font-size: 0.98rem;
+        }
+
+        .navbar-main .btn-login {
+            border-radius: 999px;
+            border: 1px solid var(--color-primary);
+            color: var(--color-primary);
+            padding: 0.35rem 1rem;
+            display: inline-flex;
+            align-items: center;
+            gap: 0.35rem;
+            background: transparent;
+        }
+
+        .navbar-main .btn-login:hover {
+            background-color: var(--color-primary);
+            color: var(--color-surface);
+        }
+
+        .navbar-main .nav-link.home-pill {
+            background: linear-gradient(135deg, #60a5fa, var(--color-primary));
+            border-radius: 999px;
+            padding-inline: 1.35rem;
+            color: var(--color-surface);
+            font-weight: 700;
+        }
+
+        /* Dark theme overrides for navbar-main - MUCH DARKER */
+        [data-theme="dark"] .navbar-main {
+            background-color: #0a0e17 !important;
+            border-bottom-color: var(--color-primary);
+        }
+
+        [data-theme="dark"] .navbar-main .nav-link {
+            color: var(--color-text) !important;
+        }
+
+        [data-theme="dark"] .navbar-main .btn-login {
+            color: var(--color-primary);
+            border-color: var(--color-primary);
+        }
+
+        [data-theme="dark"] .navbar-main .btn-login:hover {
+            background-color: var(--color-primary);
+            color: #000000;
+        }
+
+        [data-theme="dark"] .top-bar {
+            background-color: #0d1117 !important;
+            border-bottom-color: var(--color-border);
+        }
+
+        @media (max-width: 991.98px) {
+            .navbar-collapse {
+                background-color: #0a0e17 !important;
+                border-radius: 1rem;
+                margin-top: 0.65rem;
+                padding: 0.6rem 0.75rem 0.8rem;
+                box-shadow: 0 18px 40px rgba(0, 0, 0, 0.95);
+            }
+            .navbar-nav .nav-link {
+                color: #f0f6fc !important;
+                padding: 0.5rem 0.8rem;
+            }
+            .navbar-nav.ms-auto {
+                margin-top: 0.5rem;
+            }
+            .navbar-toggler {
+                border-radius: 999px;
+                padding: 0.3rem 0.55rem;
+                border-color: var(--color-border);
+                transition:
+                    background-color 0.18s ease,
+                    transform 0.18s ease,
+                    box-shadow 0.18s ease;
+                background-color: var(--color-surface-soft);
+            }
+            .navbar-toggler:hover {
+                background-color: var(--color-primary-soft);
+                transform: translateY(-1px);
+                box-shadow: 0 8px 20px rgba(0, 0, 0, 0.8);
+            }
+            .top-contact {
+                justify-content: flex-start;
+                margin-top: 0.4rem;
+            }
+            .navbar-main .navbar-collapse {
+                background-color: #0a0e17 !important;
+                border-radius: 0 0 0.75rem 0.75rem;
+                padding: 0.5rem 0.75rem 0.75rem;
+            }
+        }
+
+        /* Theme toggle button */
+        .theme-toggle {
+            border-color: var(--color-border) !important;
+            color: var(--color-text) !important;
+            transition: all 0.2s ease;
+            border-radius: 999px;
+            padding: 0.35rem;
+            width: 42px;
+            height: 42px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+*** End Patch        /* NAVBAR base (for blur effect on scroll if needed) */
+        .navbar {
+            background: rgba(255, 255, 255, 0.9);
+            backdrop-filter: blur(12px);
+            -webkit-backdrop-filter: blur(12px);
+            border-bottom: 1px solid rgba(148, 163, 184, 0.3);
+            box-shadow: 0 18px 45px var(--color-shadow);
+            transition:
+                background-color 0.25s ease,
+                box-shadow 0.25s ease,
+                border-color 0.25s ease,
+                transform 0.25s ease;
+        }
+
+        .navbar-brand {
+            font-weight: 800;
+            letter-spacing: 0.08em;
+            text-transform: uppercase;
+            font-size: 1rem;
+            display: flex;
+            align-items: center;
+            gap: 0.35rem;
+            color: var(--color-primary) !important;
+        }
+
+        .navbar-brand::before {
+            content: "";
+            width: 10px;
+            height: 10px;
+            border-radius: 999px;
+            background: radial-gradient(circle at 30% 30%, #bef264, #22c55e);
+            box-shadow: 0 0 0 4px rgba(34, 197, 94, 0.3);
+        }
+
+        .navbar-nav .nav-link {
+            position: relative;
+            padding: 0.7rem 1.15rem;
+            margin: 0 0.35rem;
+            font-size: 1.05rem;
+            font-weight: 500;
+            color: var(--color-text);
+            border-radius: 0.75rem;
+            overflow: hidden;
+            z-index: 0;
+            transition:
+                color 0.2s ease,
+                background-color 0.2s ease,
+                transform 0.2s ease,
+                box-shadow 0.2s ease;
+        }
+
+        .navbar-nav .nav-link::before {
+            content: "";
+            position: absolute;
+            inset: 0;
+            background-color: #1d4ed8;
+            opacity: 0;
+            transform: scale(0.96, 0.9);
+            transition:
+                opacity 0.18s ease,
+                transform 0.18s ease;
+            z-index: -1;
+        }
+
+        .navbar-nav .nav-link:hover::before {
+            opacity: 1;
+            transform: scale(1, 1);
+        }
+
+        .navbar-nav .nav-link:hover {
+            color: #e5e7eb;
+            transform: translateY(-1px);
+            box-shadow: 0 8px 18px rgba(15, 23, 42, 0.35);
+        }
+
+        .navbar-nav .nav-link::after {
+            content: "";
+            position: absolute;
+            left: 12%;
+            right: 12%;
+            bottom: 0.12rem;
+            height: 2px;
+            border-radius: 999px;
+            background: linear-gradient(
+                90deg,
+                transparent,
+                rgba(191, 219, 254, 1),
+                rgba(96, 165, 250, 1),
+                transparent
+            );
+            transform-origin: center;
+            transform: scaleX(0);
+            opacity: 0;
+            transition:
+                transform 0.18s ease,
+                opacity 0.18s ease;
+        }
+
+        .navbar-nav .nav-link:hover::after,
+        .navbar-nav .nav-link:focus-visible::after {
+            transform: scaleX(1);
+            opacity: 1;
+        }
+
+        .navbar-nav .nav-link.active {
+            color: #e5e7eb;
+            background-color: #1d4ed8;
+            box-shadow: 0 10px 22px rgba(15, 23, 42, 0.45);
+        }
+
+        .navbar-nav .nav-link.active::before {
+            opacity: 1;
+            transform: scale(1, 1);
+        }
+
+        .navbar-nav .nav-link.active::after {
+            transform: scaleX(1);
+            opacity: 1;
+        }
+
+        .navbar .btn-primary,
+        .navbar .btn-outline-primary {
+            border-radius: 999px;
+            font-size: 0.88rem;
+            padding: 0.42rem 0.95rem;
+            box-shadow: 0 6px 16px rgba(37, 99, 235, 0.25);
+            transition:
+                transform 0.18s ease,
+                box-shadow 0.18s ease;
+        }
+
+        .navbar .btn-primary:hover,
+        .navbar .btn-outline-primary:hover {
+            transform: translateY(-1px);
+            box-shadow: 0 10px 26px rgba(37, 99, 235, 0.4);
+        }
+
+        .navbar-collapse {
+            transition:
+                max-height 0.25s ease,
+                opacity 0.2s ease,
+                transform 0.2s ease;
+        }
+
+        /* TOP BAR + DARK MAIN NAV */
+        .top-bar {
+            background-color: var(--color-surface);
+            border-bottom: 1px solid var(--color-border);
+            padding: 2px 0; /* smaller top-bar */
+            font-size: 0.9rem;
+        }
+
+        .top-bar .brand-logo {
+            display: flex;
+            align-items: center;
+            gap: 0.4rem;
+        }
+
+        .top-bar .brand-logo img {
+            height: 46px;
+        }
+
+        .top-bar .brand-text {
+            font-weight: 700;
+            font-size: 1.1rem;
+            color: var(--color-primary);
+            text-transform: uppercase;
+        }
+
+        .top-bar .brand-subtitle {
+            font-size: 0.78rem;
+            letter-spacing: 0.05em;
+            text-transform: uppercase;
+            color: var(--color-muted);
+        }
+
+        .top-contact {
+            display: flex;
+            align-items: center;
+            justify-content: flex-end;
+            gap: 1.5rem;
+            flex-wrap: wrap;
+        }
+
+        .top-contact-item {
+            display: flex;
+            align-items: center;
+            gap: 0.35rem;
+            color: var(--color-text);
+            font-weight: 600;
+        }
+
+        .top-contact-item small {
+            display: block;
+            font-size: 0.7rem;
+            font-weight: 500;
+            color: var(--color-muted);
+            text-transform: uppercase;
+        }
+
+        .top-contact-item i {
+            color: var(--color-primary);
+            font-size: 1.1rem;
+        }
+
+        .top-seal img {
+            height: 48px;
+        }
+
+        .navbar-main {
+            background-color: var(--color-surface);
+            padding-top: 0.2rem; /* tighter navbar */
+            padding-bottom: 0.2rem; /* tighter navbar */
+            border-bottom: 1px solid var(--color-primary);
+            color: var(--color-text);
+        }
+
+        .navbar-main .navbar-brand-img {
+            height: 44px; /* smaller brand image */
             border-radius: 999px;
             overflow: hidden;
             border: 2px solid var(--color-primary);
@@ -554,11 +900,31 @@ if (session_status() === PHP_SESSION_NONE) {
         [data-theme="light"] .navbar {
             background: rgba(255, 255, 255, 0.95) !important;
         }
+
+        /* Remove extra separators/gaps so hero/banner sits flush with nav */
+        header.border-bottom {
+            border-bottom: 0 !important;
+        }
+
+        .navbar-main {
+            border-bottom: 0 !important;
+            box-shadow: none !important;
+            margin-bottom: 0 !important;
+        }
+
+        .top-bar {
+            margin-bottom: 0 !important;
+        }
+
+        .hero-section {
+            margin-top: 0 !important;
+            padding-top: 12px; /* small padding to avoid touching exactly if desired */
+        }
     </style>
 </head>
 <body data-theme="light">
 
-<header class="border-bottom fixed-top">
+<header class="border-bottom">
  <!-- Top white bar -->
  <div class="top-bar">
     <div class="container d-flex align-items-center justify-content-between">
@@ -759,21 +1125,32 @@ document.addEventListener('DOMContentLoaded', function() {
 });
 
 document.addEventListener('DOMContentLoaded', () => {
-    const header = document.querySelector('header.fixed-top');
     const footer = document.querySelector('.footer-main'); // if footer exists
 
     function adjustLayoutSpacing() {
-        let topSpace = 0;
         let bottomSpace = 0;
 
-        if (header) {
-            topSpace = header.offsetHeight;
-            document.body.style.paddingTop = topSpace + 'px';
-        }
-
+        // Do not add top padding — header is now in normal flow
         if (footer) {
             bottomSpace = footer.offsetHeight;
             document.body.style.paddingBottom = bottomSpace + 'px';
+        }
+
+        // Adjust the minimum height of the page content so that
+        // min-height accounts for footer and avoids an oversized
+        // empty area on short pages.
+        const pageContent = document.getElementById('page-content');
+        if (pageContent) {
+            const totalOffset = bottomSpace;
+
+            const contentHeight = pageContent.scrollHeight;
+            const smallPageThreshold = window.innerHeight * 0.6;
+
+            if (contentHeight < smallPageThreshold) {
+                pageContent.style.minHeight = `calc(60vh - ${totalOffset}px)`;
+            } else {
+                pageContent.style.minHeight = `calc(100vh - ${totalOffset}px)`;
+            }
         }
     }
 

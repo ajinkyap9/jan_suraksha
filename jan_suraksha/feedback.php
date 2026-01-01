@@ -1,11 +1,7 @@
 <?php
 require_once __DIR__ . '/config.php';
 
-if (session_status() === PHP_SESSION_NONE) {
-    session_start();
-}
-
-$err = ''; 
+$err = '';
 $success = '';
 
 if ($_SERVER['REQUEST_METHOD'] === 'POST') {

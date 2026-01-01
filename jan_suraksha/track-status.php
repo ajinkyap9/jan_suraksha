@@ -1,17 +1,24 @@
 <?php
 require_once __DIR__ . '/config.php';
-if (session_status() === PHP_SESSION_NONE) {
-    session_start();
-}
 
-$status = null; $err='';
-if($_SERVER['REQUEST_METHOD']==='POST'){
+$status = null;
+$err = '';
+
+if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     $code = trim($_POST['code'] ?? '');
-    if(!$code) $err = 'Please enter a Complaint ID.';
-    else {
-        $stmt = $mysqli->prepare('SELECT complaint_code, crime_type, status, updated_at FROM complaints WHERE complaint_code=?');
-        $stmt->bind_param('s',$code); $stmt->execute(); $res = $stmt->get_result();
-        if($row = $res->fetch_assoc()) $status = $row; else $err = 'No record found for this Complaint ID.';
+
+    if (!$code) {
+        $err = 'Please enter a Complaint ID.';
+    } else {
+        $stmt = $mysqli->prepare('SELECT complaint_code, crime_type, status, updated_at FROM complaints WHERE complaint_code = ?');
+        $stmt->bind_param('s', $code);
+        $stmt->execute();
+        $res = $stmt->get_result();
+        $status = $res->fetch_assoc();
+
+        if (!$status) {
+            $err = 'No record found for this Complaint ID.';
+        }
     }
 }
 ?>

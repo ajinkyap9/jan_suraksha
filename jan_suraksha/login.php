@@ -1,38 +1,40 @@
 <?php
 require_once __DIR__ . '/config.php';
+
 $err = '';
-if($_SERVER['REQUEST_METHOD'] === 'POST'){
+
+if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     $id = trim($_POST['id'] ?? '');
     $password = $_POST['password'] ?? '';
-    if(!$id || !$password){ 
-        $err = 'Fill both fields.'; 
-    }
-    else {
-        $stmt = $mysqli->prepare('SELECT id,name,password_hash FROM users WHERE email=? OR mobile=?');
-        if(!$stmt) {
-            $err = 'Database error: ' . $mysqli->error;
-        } else {
-            $stmt->bind_param('ss',$id,$id);
-            if(!$stmt->execute()) {
-                $err = 'Database error: ' . $stmt->error;
-            } else {
+
+    if (!$id || !$password) {
+        $err = 'Please enter both email/mobile and password.';
+    } else {
+        $stmt = $mysqli->prepare('SELECT id, name, password_hash FROM users WHERE email = ? OR mobile = ?');
+        
+        if ($stmt) {
+            $stmt->bind_param('ss', $id, $id);
+            
+            if ($stmt->execute()) {
                 $res = $stmt->get_result();
-                if($row = $res->fetch_assoc()){
-                    if(password_verify($password, $row['password_hash'])){
-                        $_SESSION['user_id'] = $row['id'];
-                        $_SESSION['user_name'] = $row['name'];
-                        header('Location: profile.php'); 
-                        exit;
-                    } else { 
-                        $err = 'Invalid credentials.'; 
-                    }
-                } else { 
-                    $err = 'Invalid credentials.'; 
+                $row = $res->fetch_assoc();
+
+                if ($row && password_verify($password, $row['password_hash'])) {
+                    $_SESSION['user_id'] = $row['id'];
+                    $_SESSION['user_name'] = $row['name'];
+                    header('Location: profile.php');
+                    exit;
+                } else {
+                    $err = 'Invalid email/mobile or password.';
                 }
+            } else {
+                $err = 'Database error. Please try again.';
             }
+        } else {
+            $err = 'Database error. Please try again.';
         }
     }
-  }
+}
   ?>
 
   <!doctype html>
