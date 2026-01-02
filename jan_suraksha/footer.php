@@ -36,7 +36,7 @@ footer.footer-main.visible {
     max-width: 1700px;
     margin: auto;
     padding: 1.5rem 1rem;
-    position: relative; /* Added for scroll button positioning */
+    position: relative;
 }
 
 .bg-white {
@@ -49,49 +49,118 @@ footer.footer-main.visible {
     }
 }
 
-/* Scroll Button Styles */
+/* Scroll Buttons Container - Fixed Position */
 .scroll-btn-container {
     pointer-events: auto;
-    position: absolute;
-    top: -10px; /* Slightly above footer */
+    position: fixed;
+    bottom: 30px;
     right: 20px;
+    display: flex;
+    gap: 8px;
+    flex-direction: column;
+    z-index: 1002;
 }
 
-#scrollBtn {
+.scroll-btn {
     width: 50px;
     height: 50px;
     border-radius: 50%;
-    background: #2563eb !important;
+    background: linear-gradient(135deg, #2563eb 0%, #1d4ed8 50%, #1e40af 100%) !important;
     color: white !important;
-    border: none !important;
-    font-size: 20px;
+    border: 2px solid rgba(255, 255, 255, 0.2) !important;
+    font-size: 18px;
+    font-weight: 600;
     opacity: 0;
     visibility: hidden;
-    transition: all 0.3s ease;
-    box-shadow: 0 4px 12px rgba(37, 99, 235, 0.4);
+    transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+    box-shadow: 0 6px 20px rgba(37, 99, 235, 0.4), 0 2px 8px rgba(0, 0, 0, 0.15);
     cursor: pointer;
-    z-index: 1001;
+    position: relative;
+    overflow: hidden;
+    backdrop-filter: blur(10px);
 }
 
-#scrollBtn.show {
+.scroll-btn::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: -100%;
+    width: 100%;
+    height: 100%;
+    background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.3), transparent);
+    transition: left 0.5s;
+}
+
+.scroll-btn:hover::before {
+    left: 100%;
+}
+
+.scroll-btn:hover {
+    transform: translateY(-3px) scale(1.08);
+    background: linear-gradient(135deg, #1e40af 0%, #1e3a8a 50%, #1e293b 100%) !important;
+    border-color: rgba(255, 255, 255, 0.4) !important;
+    box-shadow: 0 12px 30px rgba(37, 99, 235, 0.6), 0 4px 12px rgba(0, 0, 0, 0.2);
+}
+
+.scroll-btn:active {
+    transform: translateY(-1px) scale(1.02);
+}
+
+.scroll-btn.scroll-top {
+    background: linear-gradient(135deg, #3b82f6 0%, #2563eb 50%, #1d4ed8 100%) !important;
+    box-shadow: 0 6px 20px rgba(59, 130, 246, 0.5), 0 2px 8px rgba(0, 0, 0, 0.15);
+}
+
+.scroll-btn.scroll-top:hover {
+    background: linear-gradient(135deg, #2563eb 0%, #1d4ed8 50%, #1e40af 100%) !important;
+    box-shadow: 0 12px 30px rgba(59, 130, 246, 0.7), 0 4px 12px rgba(0, 0, 0, 0.2);
+}
+
+.scroll-btn.scroll-bottom {
+    background: linear-gradient(135deg, #60a5fa 0%, #3b82f6 50%, #2563eb 100%) !important;
+    box-shadow: 0 6px 20px rgba(96, 165, 250, 0.5), 0 2px 8px rgba(0, 0, 0, 0.15);
+}
+
+.scroll-btn.scroll-bottom:hover {
+    background: linear-gradient(135deg, #3b82f6 0%, #2563eb 50%, #1d4ed8 100%) !important;
+    box-shadow: 0 12px 30px rgba(96, 165, 250, 0.7), 0 4px 12px rgba(0, 0, 0, 0.2);
+}
+
+.scroll-btn.show {
     opacity: 1;
     visibility: visible;
+    animation: slideInUp 0.3s ease;
 }
 
-#scrollBtn:hover {
-    transform: scale(1.1);
-    background: #1e40af !important;
-    box-shadow: 0 6px 20px rgba(37, 99, 235, 0.6);
+@keyframes slideInUp {
+    from {
+        opacity: 0;
+        transform: translateY(20px);
+    }
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
 }
 
 @media (max-width: 768px) {
     .scroll-btn-container {
         right: 15px;
+        gap: 6px;
+        bottom: 25px;
     }
-    #scrollBtn {
+    .scroll-btn {
         width: 45px;
         height: 45px;
-        font-size: 18px;
+        font-size: 16px;
+    }
+}
+
+@media (max-width: 480px) {
+    .scroll-btn-container {
+        flex-direction: row;
+        bottom: 20px;
+        right: 20px;
     }
 }
 </style>
@@ -152,13 +221,6 @@ footer.footer-main.visible {
                 </div>
             </div>
 
-            <!-- Scroll Button -->
-            <div class="scroll-btn-container">
-                <button id="scrollBtn" aria-label="Scroll navigation" title="Scroll to top/bottom">
-                    <span class="scroll-icon" aria-hidden="true">⬆</span>
-                </button>
-            </div>
-
             <!-- Copyright -->
             <div class="text-center text-white small mt-2 p-2 bg-dark bg-opacity-50">
                 © <?= date('Y') ?> Jan Suraksha Portal. All Rights Reserved.
@@ -167,11 +229,23 @@ footer.footer-main.visible {
     </div>
 </footer>
 
+<!-- Scroll Buttons - Fixed Position Outside Footer -->
+<div class="scroll-btn-container">
+    <button class="scroll-btn scroll-top" id="scrollTopBtn" aria-label="Scroll to top" title="Scroll to Top">
+        <i class="bi bi-arrow-up"></i>
+    </button>
+    <button class="scroll-btn scroll-bottom" id="scrollBottomBtn" aria-label="Scroll to bottom" title="Scroll to Bottom">
+        <i class="bi bi-arrow-down"></i>
+    </button>
+</div>
+
 <script>
 document.addEventListener('DOMContentLoaded', () => {
     const footer = document.querySelector('.footer-main');
-    const scrollBtn = document.getElementById('scrollBtn');
-    if (!footer || !scrollBtn) return;
+    const scrollTopBtn = document.getElementById('scrollTopBtn');
+    const scrollBottomBtn = document.getElementById('scrollBottomBtn');
+    
+    if (!footer || !scrollTopBtn || !scrollBottomBtn) return;
 
     let isAtTop = true;
 
@@ -193,30 +267,47 @@ document.addEventListener('DOMContentLoaded', () => {
     }
 
     function handleScroll() {
+        const scrollY = window.scrollY;
+        const docHeight = document.documentElement.scrollHeight;
+        const windowHeight = window.innerHeight;
+        
         toggleFooter();
         
-        // Scroll button logic
-        if (window.scrollY > 300) {
-            scrollBtn.classList.add('show');
-        } else {
-            scrollBtn.classList.remove('show');
-        }
+        // ✅ PERFECT LOGIC: Show buttons when NOT at extremes
+        // Hide when at top OR bottom, show when in middle
+        const atTop = scrollY <= 100;
+        const atBottom = (scrollY + windowHeight) >= (docHeight - 100);
+        const shouldShow = !atTop && !atBottom;
         
-        isAtTop = window.scrollY === 0;
-        scrollBtn.querySelector('.scroll-icon').textContent = isAtTop ? '⬇' : '⬆';
-        scrollBtn.title = isAtTop ? 'Scroll to bottom' : 'Scroll to top';
+        scrollTopBtn.classList.toggle('show', shouldShow);
+        scrollBottomBtn.classList.toggle('show', shouldShow);
+        
+        // Update state for button icons if needed
+        isAtTop = atTop;
     }
 
-    function handleScrollClick() {
+    function scrollToTop() {
         window.scrollTo({
-            top: isAtTop ? document.body.scrollHeight : 0,
+            top: 0,
             behavior: 'smooth'
         });
     }
 
+    function scrollToBottom() {
+        window.scrollTo({
+            top: document.body.scrollHeight,
+            behavior: 'smooth'
+        });
+    }
+
+    // Event listeners
     window.addEventListener('scroll', handleScroll);
-    window.addEventListener('resize', adjustBodyPadding);
-    scrollBtn.addEventListener('click', handleScrollClick);
+    window.addEventListener('resize', () => {
+        adjustBodyPadding();
+        handleScroll();
+    });
+    scrollTopBtn.addEventListener('click', scrollToTop);
+    scrollBottomBtn.addEventListener('click', scrollToBottom);
     
     // Initial calls
     handleScroll();
